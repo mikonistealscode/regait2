@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}ReGait{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+
+    <script>
+        // Configure Tailwind to use our Sage Green colors and enable dark mode
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        'sage-dark': '#222725',
+                        'sage-paper': '#303633',
+                        'sage-primary': '#B9C8BC',
+                        'sage-secondary': '#D6C18A',
+                        'sage-light': '#F5F5F3',
+                        'sage-light-paper': '#FFFFFF',
+                        'sage-light-primary': '#3A6A50',
+                        'sage-light-secondary': '#A7A88A',
+                        'sage-text-dark': '#E0E0E0',
+                        'sage-text-light': '#2F4858',
+                    }
+                }
+            }
+        }
+    </script>
+    <script>
+        // This script runs immediately to prevent the page from "flashing" the wrong theme
+        if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+    </script>
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        /* Animated background for dark mode */
+        @keyframes sage-gradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        html.dark body {
+            background: linear-gradient(125deg, #222725, #3A6A50, #2F4858);
+            background-size: 200% 200%;
+            animation: sage-gradient 20s ease infinite;
+        }
+    </style>
+</head>
+<body class="bg-sage-light dark:bg-sage-dark text-sage-text-light dark:text-sage-text-dark transition-colors duration-300">
+
+    <header class="sticky top-0 bg-sage-light-paper/80 dark:bg-sage-paper/80 backdrop-blur-sm border-b border-black/10 dark:border-white/10 z-10">
+        <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <a href="/" class="text-xl font-bold">Re<span class="text-sage-light-primary dark:text-sage-primary">Gait</span></a>
+                <div class="flex items-center space-x-4">
+                    <a href="/" class="text-sm font-semibold hover:text-sage-light-primary dark:hover:text-sage-primary transition-colors">Home</a>
+                    <a href="/about" class="text-sm font-semibold hover:text-sage-light-primary dark:hover:text-sage-primary transition-colors">About</a>
+                    <button id="theme-toggle" class="p-2 rounded-full hover:bg-black/10 dark:hover:bg-white/10">
+                        <svg id="theme-toggle-dark-icon" class="w-5 h-5 hidden" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
+                        <svg id="theme-toggle-light-icon" class="w-5 h-5 hidden" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.707.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM10 18a1 1 0 01-1-1v-1a1 1 0 112 0v1a1 1 0 01-1 1zM5.05 14.95l-.707-.707a1 1 0 011.414-1.414l.707.707a1 1 0 01-1.414 1.414zM1.464 4.95l.707.707a1 1 0 01-1.414 1.414l-.707-.707a1 1 0 011.414-1.414z" clip-rule="evenodd" fill-rule="evenodd"></path></svg>
+                    </button>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+      AOS.init({
+        duration: 800,
+        once: true,
+      });
+    </script>
+    <script>
+        const themeToggleDarkIcon = document.getElementById('theme-toggle-dark-icon');
+        const themeToggleLightIcon = document.getElementById('theme-toggle-light-icon');
+
+        function updateIcons() {
+            if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                themeToggleLightIcon.classList.remove('hidden');
+            } else {
+                themeToggleDarkIcon.classList.remove('hidden');
+            }
+        }
+        updateIcons();
+
+        document.getElementById('theme-toggle').addEventListener('click', function() {
+            themeToggleDarkIcon.classList.toggle('hidden');
+            themeToggleLightIcon.classList.toggle('hidden');
+            if (localStorage.getItem('theme')) {
+                if (localStorage.getItem('theme') === 'light') {
+                    document.documentElement.classList.add('dark');
+                    localStorage.setItem('theme', 'dark');
+                } else {
+                    document.documentElement.classList.remove('dark');
+                    localStorage.setItem('theme', 'light');
+                }
+            } else {
+                if (document.documentElement.classList.contains('dark')) {
+                    document.documentElement.classList.remove('dark');
+                    localStorage.setItem('theme', 'light');
+                } else {
+                    document.documentElement.classList.add('dark');
+                    localStorage.setItem('theme', 'dark');
+                }
+            }
+        });
+    </script>
+</body>
+</html>

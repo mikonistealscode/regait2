@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+
+{% block title %}Results - ReGait{% endblock %}
+
+{% block content %}
+<script src="https://unpkg.com/countup.js@2.0.7/dist/countUp.umd.js"></script>
+
+<div class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+    <div data-aos="fade-down">
+        <h1 class="text-4xl sm:text-5xl font-extrabold text-center mb-10 leading-tight">
+            Analysis <span class="bg-gradient-to-r from-green-300 to-blue-400 text-transparent bg-clip-text">Complete</span>
+        </h1>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
+        
+        <div class="bg-sage-light-paper dark:bg-sage-paper p-6 rounded-xl shadow-2xl border border-black/10 dark:border-white/10" data-aos="fade-right">
+            <h2 class="text-2xl font-bold mb-4 text-sage-text-light dark:text-sage-text-dark">Processed Video</h2>
+            <img src="{{ video_url }}" width="100%" class="rounded-lg shadow-lg border border-black/10 dark:border-white/10"></img>
+        </div>
+
+        <div class="space-y-8" data-aos="fade-left" data-aos-delay="100">
+            <div class="bg-sage-light-paper dark:bg-sage-paper rounded-xl shadow-2xl border border-black/10 dark:border-white/10">
+                <div class="p-6">
+                    <h2 class="text-2xl font-bold mb-4">Feedback</h2>
+                    <ul class="space-y-3">
+                        {% for item in feedback %}
+                        <li class="flex items-start text-gray-700 dark:text-gray-300">
+                            <svg class="w-6 h-6 text-green-500 dark:text-green-400 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            <span>{{ item }}</span>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+
+            <div class="bg-sage-light-paper dark:bg-sage-paper rounded-xl shadow-2xl border border-black/10 dark:border-white/10">
+                <div class="p-6">
+                    <h2 class="text-2xl font-bold mb-4">Detailed Metrics</h2>
+                    <ul class="space-y-4">
+                        {% for key, value in metrics.items() %}
+                        <li>
+                            <p class="text-sm text-gray-500 dark:text-gray-400 uppercase tracking-wider">{{ key.replace('_', ' ') }}</p>
+                            <p class="text-2xl font-bold text-sage-light-primary dark:text-sage-primary" id="metric-{{ key }}" data-value="{{ value }}">
+                                {{value}}
+                            </p>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-sage-light-paper dark:bg-sage-paper p-6 rounded-xl shadow-2xl border border-black/10 dark:border-white/10 space-y-8" data-aos="fade-left" data-aos-delay="100">
+            <h2 class="text-2xl font-bold mb-4 text-sage-text-light dark:text-sage-text-dark">Walk Cycle</h2>
+            <img src= "data:image/png;base64, {{ plot_url }}" alt="plot_graph">
+        </div>
+    </div>
+
+    <div class="text-center mt-12" data-aos="fade-up" data-aos-delay="200">
+        <a href="/" class="inline-block bg-sage-light-primary dark:bg-sage-primary hover:opacity-90 text-white dark:text-sage-dark font-bold py-3 px-8 rounded-full transition-all duration-300 ease-in-out transform hover:scale-105 shadow-lg">
+            Analyze Another Video
+        </a>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const metricElements = document.querySelectorAll('[id^="metric-"]');
+        metricElements.forEach(el => {
+            const rawValue = el.dataset.value;
+            const endValue = parseFloat(rawValue);
+            const suffix = rawValue.replace(/[0-9.,]/g, '');
+            if (!isNaN(endValue)) {
+                const countUp = new CountUp(el.id, endValue, {
+                    duration: 2.5,
+                    decimalPlaces: 1,
+                    suffix: suffix,
+                });
+                if (!countUp.error) {
+                    countUp.start();
+                } else {
+                    console.error(countUp.error);
+                    el.textContent = rawValue;
+                }
+            } else {
+                el.textContent = rawValue;
+            }
+        });
+    });
+</script>
+{% endblock %}
